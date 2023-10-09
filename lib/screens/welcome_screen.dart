@@ -12,6 +12,7 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController controller;
+  late Animation animation;
 
   @override
   void initState() {
@@ -23,26 +24,44 @@ class _WelcomeScreenState extends State<WelcomeScreen>
       duration: const Duration(seconds: 1),
     );
 
+    animation = ColorTween(begin: Colors.blueGrey, end: Colors.white)
+        .animate(controller);
+
+    // Curved Animation
+    // animation = CurvedAnimation(parent: controller, curve: Curves.easeInOutCubic);
+
+    controller.forward();
+
+    // Animation bounceback
+    // animation.addStatusListener(
+    //   (status) {
+    //     if (status == AnimationStatus.completed) {
+    //       controller.reverse(from: 1.0);
+    //     } else if (status == AnimationStatus.dismissed) {
+    //       controller.forward();
+    //     }
+    //   },
+    // );
+
     controller.addListener(
       () {
-        print(controller.value);
+        setState(() {});
+        print(animation.value);
       },
     );
-    controller.forward();
   }
 
-  // @override
-  // void dispose() {
-  //   // TODO: implement dispose
-  //   super.dispose();
-  //
-  //   controller.dispose();
-  // }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    controller.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.red,
+      backgroundColor: animation.value,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
@@ -54,7 +73,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 Hero(
                   tag: 'logo',
                   child: Container(
-                    height: 60.0,
+                    height: 60,
+                    // color: Colors.black.withOpacity(controller.value),
                     child: Image.asset('images/logo.png'),
                   ),
                 ),
